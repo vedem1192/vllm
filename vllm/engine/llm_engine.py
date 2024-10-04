@@ -1,4 +1,5 @@
 import time
+import copy
 from collections import deque
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -310,7 +311,16 @@ class LLMEngine:
 
         if not self.model_config.skip_tokenizer_init:
             self.tokenizer = self._init_tokenizer()
+            # :: HERE
+            # get the special tokens dict from self.tokenizer
+            special_tokens = self.tokenizer.special_tokens
+            print("SPECIAL TOKENS", special_tokens)
             self.detokenizer = Detokenizer(self.tokenizer)
+            # make a deep copy of that dict
+            copy_special_tokens = copy.deepcopy(special_tokens)
+            print("DEEP COPY SPECIAL TOKENS", copy_special_tokens)
+            # remove <tool_call> from the dict
+            # self.detokenizer.add_special_tokens(new_dict, replace = True)
             tokenizer_group = self.get_tokenizer_group()
         else:
             self.tokenizer = None
