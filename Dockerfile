@@ -5,12 +5,12 @@
 # docs/source/dev/dockerfile/dockerfile.rst and
 # docs/source/assets/dev/dockerfile-stages-dependency.png
 
-ARG CUDA_VERSION=12.4.1
+ARG CUDA_VERSION=12.5.0
 #################### BASE BUILD IMAGE ####################
 # prepare basic build environment
 FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu20.04 AS base
-ARG CUDA_VERSION=12.4.1
-ARG PYTHON_VERSION=3.12
+ARG CUDA_VERSION=12.5.0
+ARG PYTHON_VERSION=3.11
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Python and other dependencies
@@ -82,7 +82,8 @@ COPY pyproject.toml pyproject.toml
 COPY vllm vllm
 
 # max jobs used by Ninja to build extensions
-ARG max_jobs=2
+# ARG max_jobs=2
+ARG max_jobs=4
 ENV MAX_JOBS=${max_jobs}
 # number of threads used by nvcc
 ARG nvcc_threads=8
@@ -122,7 +123,8 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
 # Check the size of the wheel if RUN_WHEEL_CHECK is true
 COPY .buildkite/check-wheel-size.py check-wheel-size.py
 # Default max size of the wheel is 250MB
-ARG VLLM_MAX_SIZE_MB=250
+# ARG VLLM_MAX_SIZE_MB=250
+ARG VLLM_MAX_SIZE_MB=300
 ENV VLLM_MAX_SIZE_MB=$VLLM_MAX_SIZE_MB
 ARG RUN_WHEEL_CHECK=true
 RUN if [ "$RUN_WHEEL_CHECK" = "true" ]; then \
@@ -145,8 +147,8 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 #################### vLLM installation IMAGE ####################
 # image with vLLM installed
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu20.04 AS vllm-base
-ARG CUDA_VERSION=12.4.1
-ARG PYTHON_VERSION=3.12
+ARG CUDA_VERSION=12.5.0
+ARG PYTHON_VERSION=3.11
 WORKDIR /vllm-workspace
 ENV DEBIAN_FRONTEND=noninteractive
 

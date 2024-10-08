@@ -311,16 +311,39 @@ class LLMEngine:
 
         if not self.model_config.skip_tokenizer_init:
             self.tokenizer = self._init_tokenizer()
-            # :: HERE
+            self.tokenizer_dummy = self._init_tokenizer()
+
+            # # :: HERE
+            # for key, value in self.tokenizer_dummy.tokenizer.added_tokens_decoder.items():
+            #     if value.content == '<|tool_call|>':
+            #         print(" + + + + + ")
+            # #         print("NOT SPECIAL", value.content)
+            #         print("--->", self.tokenizer_dummy.tokenizer.added_tokens_decoder[key].special)
+            #         self.tokenizer_dummy.tokenizer.added_tokens_decoder[key].__setattr__('special', False)
+            #         print("--->", self.tokenizer_dummy.tokenizer.added_tokens_decoder[key].special)
+            #         print(" ")
+            # #         # del self.tokenizer_dummy.tokenizer.added_tokens_decoder[key]
+            
+            # # print("TOKENIZER DUMMY", self.tokenizer_dummy.tokenizer.added_tokens_decoder)
+            # return
+
+
             # get the special tokens dict from self.tokenizer
-            special_tokens = self.tokenizer.special_tokens
+            special_tokens = self.tokenizer_dummy.tokenizer.additional_special_tokens
+            print("SPECIAL TOKENS", self.tokenizer_dummy.tokenizer._additional_special_tokens)
             print("SPECIAL TOKENS", special_tokens)
-            self.detokenizer = Detokenizer(self.tokenizer)
             # make a deep copy of that dict
             copy_special_tokens = copy.deepcopy(special_tokens)
             print("DEEP COPY SPECIAL TOKENS", copy_special_tokens)
+            copy_special_tokens.remove('<|tool_call|>')
+            new_additional_special_tokens = {'additional_special_tokens': copy_special_tokens}
+            print("PREPARING TO REMOVE: New special tokens = ", new_additional_special_tokens)
             # remove <tool_call> from the dict
-            # self.detokenizer.add_special_tokens(new_dict, replace = True)
+            self.tokenizer_dummy.tokenizer.add_special_tokens(new_additional_special_tokens, replace_additional_special_tokens=True)
+            print("SPECIAL TOKENS AFTER REMOVAL", self.tokenizer_dummy.tokenizer._additional_special_tokens)
+            print("SPECIAL TOKENS AFTER REMOVAL", self.tokenizer_dummy.tokenizer.additional_special_tokens)
+
+            self.detokenizer = Detokenizer(self.tokenizer_dummy)
             tokenizer_group = self.get_tokenizer_group()
         else:
             self.tokenizer = None
