@@ -166,7 +166,8 @@ def get_tokenizer(
             logger.warning(
                 "Using a slow tokenizer. This might cause a significant "
                 "slowdown. Consider using a fast tokenizer instead.")
-        tokenizer = get_cached_tokenizer(tokenizer)
+        # :: HERE -- CUSTOM
+        # tokenizer = get_cached_tokenizer(tokenizer)
 
     return tokenizer
 

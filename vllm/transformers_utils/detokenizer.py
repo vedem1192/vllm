@@ -279,11 +279,6 @@ def detokenize_incrementally(
              skip_special_tokens=skip_special_tokens)
     assert prev_tokens is not None
 
-    # :: HERE WE HACK THE WORLD
-    # special token id of <|tool_call|> is "49154"
-    if str(new_token_id) == "49154":
-        skip_special_tokens = False
-
     # If the new token id is out of bounds, return an empty string.
     if 0 <= new_token_id < len(tokenizer):
         # Put new_token_id in a list so skip_special_tokens is respected

@@ -1,3 +1,4 @@
+import os
 import time
 import copy
 from collections import deque
@@ -313,21 +314,11 @@ class LLMEngine:
             self.tokenizer = self._init_tokenizer()
             self.tokenizer_dummy = self._init_tokenizer()
 
-            # # :: HERE
-            # for key, value in self.tokenizer_dummy.tokenizer.added_tokens_decoder.items():
-            #     if value.content == '<|tool_call|>':
-            #         print(" + + + + + ")
-            # #         print("NOT SPECIAL", value.content)
-            #         print("--->", self.tokenizer_dummy.tokenizer.added_tokens_decoder[key].special)
-            #         self.tokenizer_dummy.tokenizer.added_tokens_decoder[key].__setattr__('special', False)
-            #         print("--->", self.tokenizer_dummy.tokenizer.added_tokens_decoder[key].special)
-            #         print(" ")
-            # #         # del self.tokenizer_dummy.tokenizer.added_tokens_decoder[key]
-            
-            # # print("TOKENIZER DUMMY", self.tokenizer_dummy.tokenizer.added_tokens_decoder)
-            # return
-
-
+            # :: HERE
+            try:
+                print("GET ENVS",os.getenv("SPECIAL_TOKENS"))
+            except Exception as e:
+                print(e)
             # get the special tokens dict from self.tokenizer
             special_tokens = self.tokenizer_dummy.tokenizer.additional_special_tokens
             print("SPECIAL TOKENS", self.tokenizer_dummy.tokenizer._additional_special_tokens)
