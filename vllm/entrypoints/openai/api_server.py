@@ -54,6 +54,7 @@ from vllm.entrypoints.openai.serving_engine import BaseModelPath
 from vllm.entrypoints.openai.serving_tokenization import (
     OpenAIServingTokenization)
 from vllm.entrypoints.openai.tool_parsers import ToolParserManager
+from vllm.entrypoints.openai.fs_worker import FsWorker
 from vllm.logger import init_logger
 from vllm.usage.usage_lib import UsageContext
 from vllm.utils import FlexibleArgumentParser, get_open_zmq_ipc_path
@@ -553,6 +554,13 @@ async def run_server(args, **uvicorn_kwargs) -> None:
 
         temp_socket.close()
 
+        if args.controller:
+            FsWorker(
+                controller=args.controller,
+                served_model_name=args.served_model_name,
+                worder_address=args.worker_address
+            ).init_heart_beat()
+
         shutdown_task = await serve_http(
             app,
             host=args.host,
@@ -573,8 +581,7 @@ async def run_server(args, **uvicorn_kwargs) -> None:
 if __name__ == "__main__":
     # NOTE(simon):
     # This section should be in sync with vllm/scripts.py for CLI entrypoints.
-    parser = FlexibleArgumentParser(
-        description="vLLM OpenAI-Compatible RESTful API server.")
+    parser = FlexibleArgumentParser(description="vLLM OpenAI-Compatible RESTful API server.")
     parser = make_arg_parser(parser)
     args = parser.parse_args()
 

@@ -819,6 +819,19 @@ class EngineArgs:
             'priority (lower value means earlier handling) and time of '
             'arrival deciding any ties).')
 
+        parser.add_argument(
+            "--controller",
+            default=None,
+            help="The address of the controller with which the model worker "
+            "will register itself."
+        )
+
+        parser.add_argument(
+            "--worker-address",
+            default=None,
+            help="The address of the model worker."
+        )
+
         return parser
 
     @classmethod
