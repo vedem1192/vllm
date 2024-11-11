@@ -1,5 +1,5 @@
 # VLLM RUN COMMAND
-# SPECIAL_TOKENS="<|TOKEN|>" CUDA_VISIBLE_DEVICES=1 vllm serve /data/chatterina/models/granite-8b-instruct-preview-4k-r240917a --dtype auto --port 8001
+# SPECIAL_TOKENS="<|TOKEN|>,<|tool_call|>,<|BLAH|>" CUDA_VISIBLE_DEVICES=1 vllm serve /data/chatterina/models/granite-8b-instruct-preview-4k-r240917a --dtype auto --port 8001
 
 # THE MAGIC HAPPENS HERE :
 # :: HERE WE HACK THE WORLD

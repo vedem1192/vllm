@@ -1,1 +1,1 @@
-docker build -f Dockerfile -t us.icr.io/aims/custom_vllm:dev .
+docker build -f Dockerfile -t us.icr.io/aims/custom_vllm:base .

@@ -315,10 +315,17 @@ class LLMEngine:
             self.tokenizer_dummy = self._init_tokenizer()
 
             # :: HERE
+            special_tokens_to_allow_through = ['<|tool_call|>']
             try:
-                print("GET ENVS",os.getenv("SPECIAL_TOKENS"))
+                env_tokens = (os.getenv("SPECIAL_TOKENS"), "")
+                env_tokens = "".join(env_tokens).split(",")
+                print("SPECIAL_TOKENS from ENV", env_tokens)
+
+                special_tokens_to_allow_through = list(set(special_tokens_to_allow_through + env_tokens))
+                print("Special tokens to allow through: ", special_tokens_to_allow_through)
             except Exception as e:
                 print(e)
+
             # get the special tokens dict from self.tokenizer
             special_tokens = self.tokenizer_dummy.tokenizer.additional_special_tokens
             print("SPECIAL TOKENS", self.tokenizer_dummy.tokenizer._additional_special_tokens)
@@ -326,7 +333,14 @@ class LLMEngine:
             # make a deep copy of that dict
             copy_special_tokens = copy.deepcopy(special_tokens)
             print("DEEP COPY SPECIAL TOKENS", copy_special_tokens)
-            copy_special_tokens.remove('<|tool_call|>')
+            
+            for t in special_tokens_to_allow_through:
+                try:
+                    print("Removing special env token ", t)
+                    copy_special_tokens.remove(t)
+                except Exception as e:
+                    print(str(e))
+
             new_additional_special_tokens = {'additional_special_tokens': copy_special_tokens}
             print("PREPARING TO REMOVE: New special tokens = ", new_additional_special_tokens)
             # remove <tool_call> from the dict
